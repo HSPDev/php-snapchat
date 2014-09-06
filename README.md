@@ -109,6 +109,50 @@ $snapchat->logout();
 ?>
 ```
 
+How to stop getting blocked by Snapchat
+------------
+This example will show you how to log into an account and store the auth key between sessions.
+This is just an example and should not be deployed to production (you need to keep that auth key secret!)
+
+```php
+//Set your own login info here. 
+$username = 'YourSnapChatUsernameHere';
+$password = 'YuorSnapChatPasswordHere';
+
+$snapchat = null;
+/*
+Check if the auth file exists.
+Remember the auth token is different for each user you access
+You should probably also store this somewhere safe!!
+Outside your webroot at least.....
+*/
+$authFilePath = __DIR__.'/auth_token.txt';
+if(file_exists($authFilePath))
+{
+	//Username, password as null, and grab the exisiting token from disk.
+	$snapchat = new Snapchat($username, null, file_get_contents($authFilePath));
+	echo 'We logged in with an existing auth token! :D<br />', PHP_EOL;
+}
+else
+{
+	//Log in the old fashioned way.
+	$snapchat = new Snapchat($username, $password);
+	echo 'We logged in the old fashioned way! :(<br />', PHP_EOL;
+}
+
+//Check if we failed to log in succesfully
+if(!$snapchat->isLoggedIn())
+{
+	die("Could not log into snapchat!");
+}
+//Store the auth token on disk so we don't have to log in again and again.
+file_put_contents($authFilePath, $snapchat->getAuthToken());
+
+// Get your information. 
+$snaps = $snapchat->getUpdates();
+//var_dump($snaps); //If you want to see the raw data
+echo 'Your birthday is: ', $snaps->birthday, ' <br />', PHP_EOL;
+```
 
 Documentation
 ------------
