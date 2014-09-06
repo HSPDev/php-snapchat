@@ -10,6 +10,9 @@ It's similar to the [excellent Snaphax library](http://github.com/tlack/snaphax)
 built by Thomas Lackner <[@tlack](http://twitter.com/tlack)>, but the approach
 is different enough that I figured it deserved its own repo.
 
+It now also supports storing the authentication key between requests, so you don't have to hammer Snapchat
+with your login requests and get blocked. Look futher down the page for that.
+
 We love it when developers add new features, fix bugs, and submit pull requests.
 (We need more pull requests!)
 
@@ -111,7 +114,7 @@ $snapchat->logout();
 
 How to stop getting blocked by Snapchat
 ------------
-This example will show you how to log into an account and store the auth key between sessions.
+This example will show you how to log into an account and store the auth key between requests.
 This is just an example and should not be deployed to production (you need to keep that auth key secret!)
 
 ```php
