@@ -68,13 +68,24 @@ class Snapchat extends SnapchatAgent {
 		$this->auth_token = FALSE;
 		$this->username = FALSE;
 
-		if (!empty($password)) {
-			$this->login($username, $password);
-		}
-		elseif (!empty($auth_token)) {
+		if (!empty($auth_token)) {
 			$this->auth_token = $auth_token;
 			$this->cache = new SnapchatCache();
 			$this->username = $username;
+
+			//Retrieve updates like if we performed an actual log in.
+			$updates = $this->getUpdates(true);
+			//Checks if login was ok.
+			if($updates === false)
+			{
+				//Login with this auth token failed. Set our state to not logged in.
+				$this->auth_token = FALSE;
+				$this->username = FALSE;
+			}
+		}
+		//Only log in if auth token wasn't set. 
+		elseif (!empty($password)) {
+			$this->login($username, $password);
 		}
 	}
 
@@ -118,6 +129,29 @@ class Snapchat extends SnapchatAgent {
 		else {
 			return FALSE;
 		}
+	}
+	/**
+	 * Gets the auth token for external storage in between requests.
+	 *
+	 * @return mixed
+	 *   The auth token if succesfull, FALSE otherwise.
+	 */
+	public function getAuthToken()
+	{
+		return $this->auth_token; //Is either a string or FALSE
+	}
+
+	/**
+	 * Checks if we are logged in
+	 *
+	 * @return bool
+	 *   True if logged in, false otherwise
+	 */
+	public function isLoggedIn()
+	{
+		//If either one evaluates to false, inner statement is true and return becomes false.
+		//Could probably be && but I just stole this from elsewhere in this code.
+		return !(!$this->auth_token || !$this->username);
 	}
 
 	/**
